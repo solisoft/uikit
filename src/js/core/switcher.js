@@ -1,11 +1,12 @@
-import { Togglable } from '../mixin/index';
+import { Togglable, Priority } from '../mixin/index';
 import { $$, addClass, attr, data, filter, getIndex, hasClass, index, isTouch, matches, queryAll, removeClass, win } from '../util/index';
 
 export default function (UIkit) {
 
     UIkit.component('switcher', {
 
-        mixins: [Togglable],
+        // mixins: [Togglable],
+        mixins: [Togglable, Priority],
 
         args: 'connect',
 
@@ -18,7 +19,7 @@ export default function (UIkit) {
 
         defaults: {
             connect: '~.uk-switcher',
-            toggle: '> *',
+            toggle: '> .uk-more > .uk-dropdown > * > *, > *:not(.uk-more)',
             active: 0,
             swiping: true,
             cls: 'uk-active',
@@ -46,10 +47,13 @@ export default function (UIkit) {
                 name: 'click',
 
                 delegate() {
-                    return `${this.toggle}:not(.uk-disabled)`;
+
+                    const selector = `${this.toggle}`.split(',').map(part => `${part}:not(.uk-disabled)`).join(',');
+                    return selector;
                 },
 
                 handler(e) {
+                    if (e.defaultPrevented) return;
                     e.preventDefault();
                     this.show(e.current);
                 }
@@ -68,6 +72,7 @@ export default function (UIkit) {
                 },
 
                 handler(e) {
+                    if (e.defaultPrevented) return;
                     e.preventDefault();
                     this.show(data(e.current, this.attrItem));
                 }
@@ -106,6 +111,16 @@ export default function (UIkit) {
         },
 
         methods: {
+
+            priorityEnabled() {
+                var enabled = !UIkit.util.hasClass(this.list, 'uk-nav');
+                this.$options.mixins.forEach(mixin => {
+                    if (mixin.methods && mixin.methods.priorityEnabled) {
+                        enabled &= mixin.methods.priorityEnabled.call(this);
+                    }
+                });
+                return enabled;
+            },
 
             show(item) {
 

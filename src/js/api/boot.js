@@ -30,14 +30,14 @@ export default function (UIkit) {
 
         apply(doc.body, connect);
 
-        fastdom.flush();
-
         (new Observer(mutations => mutations.forEach(applyMutation))).observe(docEl, {
             childList: true,
             subtree: true,
             characterData: true,
             attributes: true
         });
+
+        fastdom.flush();
 
         UIkit._initialized = true;
     }

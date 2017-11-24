@@ -9,6 +9,7 @@ import Slideshow from './components/slideshow';
 import Sortable from './components/sortable';
 import Tooltip from './components/tooltip';
 import Upload from './components/upload';
+import Priority from './components/priority';
 
 UIkit.use(Countdown);
 UIkit.use(GridParallax);
@@ -19,6 +20,7 @@ UIkit.use(Slideshow);
 UIkit.use(Sortable);
 UIkit.use(Tooltip);
 UIkit.use(Upload);
+UIkit.use(Priority);
 
 if (BUNDLED) {
     boot(UIkit);

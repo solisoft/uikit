@@ -1,5 +1,5 @@
 import { Position, Togglable } from '../mixin/index';
-import { $$, addClass, Animation, attr, css, docEl, includes, isString, isTouch, MouseTracker, offset, on, once, pointerEnter, pointerLeave, pointInRect, query, removeClass, removeClasses, toggleClass, trigger, win, within } from '../util/index';
+import { $$, addClass, Animation, attr, css, docEl, includes, isString, isTouch, MouseTracker, offset, on, once, pointerEnter, pointerLeave, pointInRect, query, removeClass, removeClasses, toggleClass, trigger, win, within, doc } from '../util/index';
 
 export default function (UIkit) {
 
@@ -86,7 +86,7 @@ export default function (UIkit) {
                     var id = e.target.hash;
 
                     if (!id) {
-                        e.preventDefault();
+                        once(doc, 'click', e => e.preventDefault());
                     }
 
                     if (!id || !within(id, this.$el)) {

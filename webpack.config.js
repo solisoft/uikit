@@ -34,6 +34,7 @@ module.exports = [
                 'components$': __dirname + '/dist/icons/components.json',
             }
         },
+        devtool: 'inline-source-map',
         plugins: [
             // new circular,
             new webpack.DefinePlugin({
@@ -58,7 +59,7 @@ module.exports = [
         },
         plugins: [
             // new circular,
-            new uglify,
+            // new uglify,
             new webpack.DefinePlugin({
                 BUNDLED: true,
                 VERSION: `'${version}'`

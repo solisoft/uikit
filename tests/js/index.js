@@ -109,6 +109,7 @@ window.addEventListener('load', () => setTimeout(() => {
         'position',
         'placeholder',
         'progress',
+        'priority',
         'scroll',
         'scrollspy',
         'search',

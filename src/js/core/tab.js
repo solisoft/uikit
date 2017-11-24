@@ -15,7 +15,17 @@ export default function (UIkit) {
 
         defaults: {
             media: 960,
-            attrItem: 'uk-tab-item'
+            attrItem: 'uk-tab-item',
+            mediaToggler: null
+        },
+
+        methods: {
+
+            priorityEnabled() {
+                var enabled = !this.mediaToggler || !this.mediaToggler.isToggled();
+                enabled &= UIkit.components.switcher.options.methods.priorityEnabled.call(this);
+                return enabled;
+            },
         },
 
         init() {
@@ -27,7 +37,7 @@ export default function (UIkit) {
                     : false;
 
             if (cls) {
-                UIkit.toggle(this.$el, {cls, mode: 'media', media: this.media});
+                this.mediaToggler = UIkit.toggle(this.$el, {cls, mode: 'media', media: this.media});
             }
         }
 

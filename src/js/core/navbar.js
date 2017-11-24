@@ -1,11 +1,11 @@
-import { Class } from '../mixin/index';
+import { Class, Priority } from '../mixin/index';
 import { $$, addClass, after, append, assign, css, height, includes, isRtl, isVisible, matches, noop, query, toFloat, Transition, within } from '../util/index';
 
 export default function (UIkit) {
 
     UIkit.component('navbar', {
 
-        mixins: [Class],
+        mixins: [Class, Priority],
 
         props: {
             dropdown: String,
@@ -48,12 +48,16 @@ export default function (UIkit) {
 
             pos({align}) {
                 return `bottom-${align}`;
+            },
+
+            lists() {
+                return UIkit.util.$$('ul.uk-navbar-nav', this.$el);
             }
 
         },
 
         ready() {
-
+            // debugger;
             if (this.dropbar) {
                 UIkit.navbarDropbar(
                     query(this.dropbar, this.$el) || after(this.dropbarAnchor || this.$el, '<div></div>'),
@@ -93,6 +97,26 @@ export default function (UIkit) {
         ],
 
         methods: {
+
+            useWidth() {
+                return true;
+            },
+
+            priorityEnabled() {
+                return true;
+            },
+
+            getAllElements() {
+
+                var els = [];
+                this.lists.forEach(list => {
+                    els = els.concat(UIkit.util.toNodes(list.childNodes)
+                                               .filter(el => el !== this.moreNode &&  el.nodeType !== Node.TEXT_NODE)
+                                               .map(el => ({el, origin: list})));
+                });
+
+                return els;
+            },
 
             getActive() {
                 var active = UIkit.drop.getActive();
