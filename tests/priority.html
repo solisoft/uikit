@@ -8,39 +8,14 @@
         <script src="js/test.js"></script>
         <style>
 
-            .uk-overlay { background: rgba(255,255,255,0.8); }
+            .uk-more span {
+                height:100%;
+            }
 
-            ul {
-                padding: 0;
-                list-style: none;
-            }
-            ul li {
-                /* display: inline; */
-                float:left;
-                padding: 5px;
-            }
-            /* JavaScript */
-            #js-boundary {
-                height: 300px;
-                outline: 1px solid rgba(0,0,0,0.1);
+            .uk-more span svg {
+                top: 50%;
                 position: relative;
-            }
-
-            #js-target {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 200px;
-                height: 100px;
-                background: rgba(0,0,0,0.1);
-            }
-
-            #js-element {
-                position: absolute;
-                display: none;
-                width: 75px;
-                height: 75px;
-                background: rgba(0,0,0,0.1);
+                transform: translate(0,-50%);
             }
 
         </style>
@@ -50,44 +25,14 @@
 
         <div class="uk-container">
 
-            <h1>Priority</h1>
+            <h1>Simple</h1>
 
-            <div class="uk-child-width-auto" uk-grid>
-                <div>
 
-                    <ul class="uk-tab-left" uk-tab>
-                        <li class="uk-active"><a href="#">Active</a></li>
-                        <li><a href="#">Item</a></li>
-                        <li><a href="#">Item</a></li>
-                        <li><a href="#">Item</a></li>
-                        <li><a href="#">Item</a></li>
-                        <li><a href="#">Item</a></li>
-                        <li><a href="#">Item</a></li>
-                    </ul>
-
-                </div>
-                <!-- <div>
-
-                    <ul class="uk-tab-right" uk-tab>
-                        <li class="uk-active"><a href="#">Active</a></li>
-                        <li><a href="#">Item</a></li>
-                        <li><a href="#">Item</a></li>
-                        <li><a href="#">Item</a></li>
-                        <li><a href="#">Item</a></li>
-                        <li><a href="#">Item</a></li>
-                        <li><a href="#">Item</a></li>
-                    </ul>
-
-                </div> -->
-            </div>
-
-            <!-- <ul uk-priority></ul> -->
-
-            <!-- <div class="uk-margin uk-position-relative uk-dark">
+            <div class="uk-margin uk-position-relative uk-dark">
                 <div class="uk-position-top">
                     <nav class="uk-navbar-container uk-navbar-transparent" uk-navbar>
                         <div class="uk-navbar-left">
-                            <ul class="uk-navbar-nav">
+                            <ul class="uk-navbar-nav uk-priority">
                                 <li class="uk-active"><a href="">Active</a></li>
                                 <li>
                                     <a href="">Parent</a>
@@ -115,7 +60,7 @@
                         </div>
 
                         <div class="uk-navbar-center">
-                            <ul class="uk-navbar-nav">
+                            <ul class="uk-navbar-nav uk-priority">
                                 <li class="uk-active"><a href="">Active</a></li>
                                 <li>
                                     <a href="">Parent</a>
@@ -143,7 +88,7 @@
                         </div>
 
                         <div class="uk-navbar-right">
-                            <ul class="uk-navbar-nav">
+                            <ul class="uk-navbar-nav uk-priority">
                                 <li class="uk-active"><a href="">Active</a></li>
                                 <li>
                                     <a href="">Parent</a>
@@ -173,10 +118,10 @@
                         
                     </nav>
                 </div>
-            </div> -->
+            </div>
 
 
-            <!-- <ul class="uk-tab-left" uk-tab>
+            <ul class="uk-tab" uk-tab>
                 <li class="uk-active"><a href="#">Active</a></li>
                 <li><a href="#">Item</a></li>
                 <li><a href="#">Item</a></li>
@@ -184,16 +129,315 @@
                 <li><a href="#">Item</a></li>
                 <li><a href="#">Item</a></li>
                 <li><a href="#">Item</a></li>
-            </ul> -->
+            </ul>
+ 
 
-
-            <!-- <h3>Button</h3>
+            <h2>Center</h2>
             
-            <p uk-switcher="animation: uk-animation-fade">
-                <a class="uk-button uk-button-default" href="#">Link</a>
-                <button class="uk-button uk-button-default" type="button">Button</button>
-                <button class="uk-button uk-button-default" type="button">Button</button>
-            </p> -->
+            <nav class="uk-navbar-container uk-margin" uk-navbar>
+                <div class="uk-navbar-left">
+
+                    <ul class="uk-navbar-nav">
+                        <li>
+                            <a href="#">Left</a>
+                            <div class="uk-navbar-dropdown">
+                                <ul class="uk-nav uk-navbar-dropdown-nav">
+                                    <li class="uk-active"><a href="#">Active</a></li>
+                                        <li class="uk-parent">
+                                        <a href="#">Parent</a>
+                                        <ul class="uk-nav-sub">
+                                            <li><a href="#">Sub item</a></li>
+                                            <li><a href="#">Sub item</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="uk-nav-header">Header</li>
+                                    <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: table"></span> Item</a></li>
+                                    <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: thumbnails"></span> Item</a></li>
+                                    <li class="uk-nav-divider"></li>
+                                    <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: trash"></span> Item</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+
+                </div>
+                <div class="uk-navbar-center">
+
+                    <ul class="uk-navbar-nav uk-priority">
+                        <li class="uk-active"><a href="#">Active</a></li>
+                        <li>
+                            <a href="#">Parent</a>
+                            <div class="uk-navbar-dropdown">
+                                <ul class="uk-nav uk-navbar-dropdown-nav">
+                                    <li class="uk-active"><a href="#">Active</a></li>
+                                        <li class="uk-parent">
+                                        <a href="#">Parent</a>
+                                        <ul class="uk-nav-sub">
+                                            <li><a href="#">Sub item</a></li>
+                                            <li><a href="#">Sub item</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="uk-nav-header">Header</li>
+                                    <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: table"></span> Item</a></li>
+                                    <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: thumbnails"></span> Item</a></li>
+                                    <li class="uk-nav-divider"></li>
+                                    <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: trash"></span> Item</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li>
+                            <a href="#">Content</a>
+                            <div class="uk-navbar-dropdown">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+                        </li>
+                        <li><a href="#">Item</a></li>
+                        <li><a href="#">Item</a></li>
+                        <li><a href="#">Item</a></li>
+                    </ul>
+                    <div class="uk-navbar-item">
+                        <div>Some <a href="#">Link</a></div>
+                    </div>
+
+                </div>
+                <div class="uk-navbar-right">
+
+                    <ul class="uk-navbar-nav">
+                        <li>
+                            <a href="#">Right</a>
+                            <div class="uk-navbar-dropdown">
+                                <ul class="uk-nav uk-navbar-dropdown-nav">
+                                    <li class="uk-active"><a href="#">Active</a></li>
+                                        <li class="uk-parent">
+                                        <a href="#">Parent</a>
+                                        <ul class="uk-nav-sub">
+                                            <li><a href="#">Sub item</a></li>
+                                            <li><a href="#">Sub item</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="uk-nav-header">Header</li>
+                                    <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: table"></span> Item</a></li>
+                                    <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: thumbnails"></span> Item</a></li>
+                                    <li class="uk-nav-divider"></li>
+                                    <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: trash"></span> Item</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+
+                </div>
+            </nav>
+
+            <nav class="uk-navbar-container uk-margin" uk-navbar>
+                <div class="uk-navbar-center">
+
+                    <div class="uk-navbar-center-left"><div>
+                        <ul class="uk-navbar-nav">
+                            <li class="uk-active"><a href="#">Active</a></li>
+                            <li>
+                                <a href="#">Parent</a>
+                                <div class="uk-navbar-dropdown">
+                                    <ul class="uk-nav uk-navbar-dropdown-nav">
+                                        <li class="uk-active"><a href="#">Active</a></li>
+                                            <li class="uk-parent">
+                                            <a href="#">Parent</a>
+                                            <ul class="uk-nav-sub">
+                                                <li><a href="#">Sub item</a></li>
+                                                <li><a href="#">Sub item</a></li>
+                                            </ul>
+                                        </li>
+                                        <li class="uk-nav-header">Header</li>
+                                        <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: table"></span> Item</a></li>
+                                        <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: thumbnails"></span> Item</a></li>
+                                        <li class="uk-nav-divider"></li>
+                                        <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: trash"></span> Item</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li>
+                                <a href="#">Content</a>
+                                <div class="uk-navbar-dropdown">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+                            </li>
+                        </ul>
+                    </div></div>
+
+                    <a class="uk-navbar-item uk-logo" href="#">Logo</a>
+
+                    <div class="uk-navbar-center-right"><div>
+                        <ul class="uk-navbar-nav">
+                            <li class="uk-active"><a href="#">Active</a></li>
+                            <li>
+                                <a href="#">Parent</a>
+                                <div class="uk-navbar-dropdown">
+                                    <ul class="uk-nav uk-navbar-dropdown-nav">
+                                        <li class="uk-active"><a href="#">Active</a></li>
+                                            <li class="uk-parent">
+                                            <a href="#">Parent</a>
+                                            <ul class="uk-nav-sub">
+                                                <li><a href="#">Sub item</a></li>
+                                                <li><a href="#">Sub item</a></li>
+                                            </ul>
+                                        </li>
+                                        <li class="uk-nav-header">Header</li>
+                                        <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: table"></span> Item</a></li>
+                                        <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: thumbnails"></span> Item</a></li>
+                                        <li class="uk-nav-divider"></li>
+                                        <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: trash"></span> Item</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li>
+                                <a href="#">Content</a>
+                                <div class="uk-navbar-dropdown">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+                            </li>
+                        </ul>
+                        <div class="uk-navbar-item">
+                            <div>Some <a href="#">Link</a></div>
+                        </div>
+                    </div></div>
+
+                </div>
+            </nav>
+
+            <nav class="uk-navbar-container uk-margin" uk-navbar>
+                <div class="uk-navbar-left">
+
+                    <ul class="uk-navbar-nav">
+                        <li>
+                            <a href="#">Left</a>
+                            <div class="uk-navbar-dropdown">
+                                <ul class="uk-nav uk-navbar-dropdown-nav">
+                                    <li class="uk-active"><a href="#">Active</a></li>
+                                        <li class="uk-parent">
+                                        <a href="#">Parent</a>
+                                        <ul class="uk-nav-sub">
+                                            <li><a href="#">Sub item</a></li>
+                                            <li><a href="#">Sub item</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="uk-nav-header">Header</li>
+                                    <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: table"></span> Item</a></li>
+                                    <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: thumbnails"></span> Item</a></li>
+                                    <li class="uk-nav-divider"></li>
+                                    <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: trash"></span> Item</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+
+                </div>
+                <div class="uk-navbar-center">
+
+                    <div class="uk-navbar-center-left"><div>
+                        <ul class="uk-navbar-nav uk-priority">
+                            <li class="uk-active"><a href="#">Active</a></li>
+                            <li>
+                                <a href="#">Parent</a>
+                                <div class="uk-navbar-dropdown">
+                                    <ul class="uk-nav uk-navbar-dropdown-nav">
+                                        <li class="uk-active"><a href="#">Active</a></li>
+                                            <li class="uk-parent">
+                                            <a href="#">Parent</a>
+                                            <ul class="uk-nav-sub">
+                                                <li><a href="#">Sub item</a></li>
+                                                <li><a href="#">Sub item</a></li>
+                                            </ul>
+                                        </li>
+                                        <li class="uk-nav-header">Header</li>
+                                        <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: table"></span> Item</a></li>
+                                        <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: thumbnails"></span> Item</a></li>
+                                        <li class="uk-nav-divider"></li>
+                                        <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: trash"></span> Item</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li>
+                                <a href="#">Content</a>
+                                <div class="uk-navbar-dropdown">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+                            </li>
+                        </ul>
+                    </div></div>
+
+                    <a class="uk-navbar-item uk-logo" href="#">Logo</a>
+
+                    <div class="uk-navbar-center-right"><div>
+                        <ul class="uk-navbar-nav uk-priority">
+                            <li class="uk-active"><a href="#">Active</a></li>
+                            <li>
+                                <a href="#">Parent</a>
+                                <div class="uk-navbar-dropdown">
+                                    <ul class="uk-nav uk-navbar-dropdown-nav">
+                                        <li class="uk-active"><a href="#">Active</a></li>
+                                            <li class="uk-parent">
+                                            <a href="#">Parent</a>
+                                            <ul class="uk-nav-sub">
+                                                <li><a href="#">Sub item</a></li>
+                                                <li><a href="#">Sub item</a></li>
+                                            </ul>
+                                        </li>
+                                        <li class="uk-nav-header">Header</li>
+                                        <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: table"></span> Item</a></li>
+                                        <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: thumbnails"></span> Item</a></li>
+                                        <li class="uk-nav-divider"></li>
+                                        <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: trash"></span> Item</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li>
+                                <a href="#">Content</a>
+                                <div class="uk-navbar-dropdown">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+                            </li>
+                        </ul>
+                        <div class="uk-navbar-item">
+                            <div>Some <a href="#">Link</a></div>
+                        </div>
+                    </div></div>
+
+                </div>
+                <div class="uk-navbar-right">
+
+                    <ul class="uk-navbar-nav">
+                        <li>
+                            <a href="#">Right</a>
+                            <div class="uk-navbar-dropdown">
+                                <ul class="uk-nav uk-navbar-dropdown-nav">
+                                    <li class="uk-active"><a href="#">Active</a></li>
+                                        <li class="uk-parent">
+                                        <a href="#">Parent</a>
+                                        <ul class="uk-nav-sub">
+                                            <li><a href="#">Sub item</a></li>
+                                            <li><a href="#">Sub item</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="uk-nav-header">Header</li>
+                                    <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: table"></span> Item</a></li>
+                                    <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: thumbnails"></span> Item</a></li>
+                                    <li class="uk-nav-divider"></li>
+                                    <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: trash"></span> Item</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+
+                </div>
+            </nav>
+
+            <h2>Left</h2>
+
+            <div class="uk-child-width-auto" uk-grid>
+                <div>
+
+                    <ul class="uk-tab-left" uk-tab>
+                        <li class="uk-active"><a href="#">Active</a></li>
+                        <li><a href="#">Item</a></li>
+                        <li><a href="#">Item</a></li>
+                        <li><a href="#">Item</a></li>
+                        <li><a href="#">Item</a></li>
+                        <li><a href="#">Item</a></li>
+                        <li><a href="#">Item</a></li>
+                    </ul>
+
+                </div>
+
+            </div>
 
         </div>
 

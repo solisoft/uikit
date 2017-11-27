@@ -1,11 +1,12 @@
-import { Class, Priority } from '../mixin/index';
+import { Class, Priority, Nooverlap } from '../mixin/index';
 import { $$, addClass, after, append, assign, css, height, includes, isRtl, isVisible, matches, noop, query, toFloat, Transition, within } from '../util/index';
 
 export default function (UIkit) {
 
     UIkit.component('navbar', {
 
-        mixins: [Class, Priority],
+        mixins: [Class, Priority, Nooverlap],
+        // mixins: [Class],
 
         props: {
             dropdown: String,
@@ -50,14 +51,32 @@ export default function (UIkit) {
                 return `bottom-${align}`;
             },
 
-            lists() {
+            priorityLists() {
+                return UIkit.util.$$('ul.uk-navbar-nav.uk-priority', this.$el);
+            },
+
+            targetNode() {
+                return this.priorityLists.length ? this.priorityLists[this.priorityLists.length - 1] : undefined;
+            },
+
+            allLists() {
                 return UIkit.util.$$('ul.uk-navbar-nav', this.$el);
+            },
+
+            noPriorityLists() {
+                return UIkit.util.$$('.uk-navbar-item, ul.uk-navbar-nav:not(.uk-priority)', this.$el);
+            },
+
+            overlappingItems() {
+                // const items = UIkit.util.$$('[class^=uk-navbar-]:not(.uk-navbar-nav):not(.uk-navbar-dropdown)', this.$el);
+                const items = UIkit.util.$$('.uk-navbar-nav, .uk-navbar-item', this.$el);
+                // debugger;
+                return items;
             }
 
         },
 
         ready() {
-            // debugger;
             if (this.dropbar) {
                 UIkit.navbarDropbar(
                     query(this.dropbar, this.$el) || after(this.dropbarAnchor || this.$el, '<div></div>'),
@@ -68,12 +87,10 @@ export default function (UIkit) {
         },
 
         update() {
-
             UIkit.drop(
                 $$(`${this.dropdown} .${this.clsDrop}`, this.$el).filter(el => !UIkit.getComponent(el, 'dropdown')),
                 assign({}, this.$props, {boundary: this.boundary, pos: this.pos})
             );
-
         },
 
         events: [
@@ -98,25 +115,34 @@ export default function (UIkit) {
 
         methods: {
 
+            //---- priority overrides
+            mightGrow() {
+                return false;
+            },
+
+            preventOverlapEnabled() {
+                return true;//this.priorityLists.length > 0
+            },
+
+            isMenuEntry({el}) {
+                return el.nodeName === 'LI';
+            },
+
+            getAvailableWidth() {
+                const sub = this.noPriorityLists.reduce((width, list) => width + list.offsetWidth, 0);
+                const pw = this.parentWidth();
+                const availableWidth = pw - sub;
+                return availableWidth;
+            },
+
             useWidth() {
                 return true;
             },
 
             priorityEnabled() {
-                return true;
+                return this.priorityLists.length;
             },
-
-            getAllElements() {
-
-                var els = [];
-                this.lists.forEach(list => {
-                    els = els.concat(UIkit.util.toNodes(list.childNodes)
-                                               .filter(el => el !== this.moreNode &&  el.nodeType !== Node.TEXT_NODE)
-                                               .map(el => ({el, origin: list})));
-                });
-
-                return els;
-            },
+            //---- priority overrides
 
             getActive() {
                 var active = UIkit.drop.getActive();

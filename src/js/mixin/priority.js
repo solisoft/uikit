@@ -21,6 +21,10 @@ export default {
             return this.$el;
         },
 
+        priorityLists() {
+            return [this.list];
+        },
+
         temporaryNode() {
             return this.useListItems() ? this.subListNode : this.subDivNode;
         },
@@ -30,11 +34,11 @@ export default {
         },
 
         container() {
-            return this.$el.parentNode;
+            return this.$el;
         },
 
         moreNode() {
-            if (!this._moreNode) {
+            if (!this._moreNode && this.targetNode) {
                 const useList = this.useListItems();
                 const elTypeItem = useList ? 'li' : 'div';
                 const elTypeContainer = useList ? 'ul' : 'div';
@@ -58,12 +62,26 @@ export default {
         subDivNode() {
             return UIkit.util.$('> div', this.dropNode);
         }
+
     },
 
     methods: {
 
-        getCurrentWidth() {
-            return this.currentElements.reduce((width, {el}) => width + el.offsetWidth, 0) + (this.currentElements.length < this.allElements.length ? this.moreNode.offsetWidth : 0);
+        parentWidth() {
+            const pw = this.container.clientWidth;
+            const pw2 = UIkit.util.width(this.container);//.clientWidth;
+            // console.log('pw',pw,'pw2',pw2);
+            // if(pw > pw2) debugger;
+            return Math.max(pw2, pw);
+        },
+
+        getAvailableWidth(list) {
+            return this.parentWidth();
+        },
+
+        getNeededWidth() {
+            const w = this.currentElements.reduce((width, {el}) => width + el.offsetWidth, 0) + (this.currentElements.length < this.allElements.length ? this.moreNode.offsetWidth : 0);
+            return w;
         },
 
         showMore() {
@@ -83,17 +101,22 @@ export default {
         },
 
         useListItems() {
-            return this.targetNode.nodeName === 'UL';
+            return this.targetNode && this.targetNode.nodeName === 'UL';
         },
 
-        shouldShrink(parentWidth) {
-            return this.currentElements.length && (this.useWidth() ? this.getCurrentWidth() > parentWidth : this.hasBreakingElement());
+        shouldShrink() {
+            return this.currentElements.length && (this.useWidth() ? this.getNeededWidth() > this.getAvailableWidth() : this.hasBreakingElement());
         },
 
         getAllElements() {
-            return util.toNodes(this.list.childNodes)
-                       .filter(el => el !== this.moreNode && el.nodeType !== Node.TEXT_NODE)
-                       .map(el => ({el, origin: this.list}));
+            var els = [];
+            this.priorityLists.forEach(list => {
+                els = els.concat(UIkit.util.toNodes(list.childNodes)
+                                            .filter(el => el !== this.moreNode && el.nodeType == Node.ELEMENT_NODE)
+                                            .map(el => ({el, origin: list})));
+            });
+
+            return els;
         },
 
         updateCollection(data) {
@@ -127,22 +150,34 @@ export default {
             return true;
         },
 
-        getParentWidth() {
-            return util.width(this.container);
+        putOneEntryBack() {
+            const node = this.hiddenElements[0];
+            util.append(node.origin, node.el);
+            this.currentElements.push(node);
+            return node;
+        },
+
+        removeOneEntry() {
+            const node = this.currentElements.pop();
+            this.storeNode(node);
+        },
+
+        getAvailableSpace() {
+            return this.parentWidth() - this.getNeededWidth();
+        },
+
+        mightGrow() {
+            return true;
         },
 
         canGrow() {
             if (this.hiddenElements.length) {
-                const node = this.hiddenElements[0];
-                util.append(node.origin, node.el);
-                this.currentElements.push(node);
-                const parentWidth = this.getParentWidth();
-                const neededWidth = this.getCurrentWidth();
-                const stillFits = neededWidth <= parentWidth;
-                // if (stillFits) debugger;
-                this.currentElements.pop();
-                this.storeNode(node);
-                return stillFits;
+
+                this.putOneEntryBack();
+                const space = this.getAvailableSpace();
+                this.removeOneEntry();
+
+                return space >= 0;
             }
         },
 
@@ -166,21 +201,17 @@ export default {
             this.hiddenElements = [];
         },
 
-        resize(data, parentWidth) {
+        resize() {
 
-            data.lastParentWidth = parentWidth;
-            
             this.putBack();
 
-            data.growCheck = true;
-            // while (this.currentElements.length && this.getCurrentWidth() > parentWidth) {
-            while (this.shouldShrink(parentWidth)) {
-                
+            while (this.shouldShrink()) {
+
                 const fromRight = this.shrinkFromRight();
                 const overHangingChild = fromRight ? this.currentElements.pop() : this.currentElements.shift();
                 this.hiddenElements.unshift(overHangingChild);
                 util.append(this.targetNode, this.moreNode);
-                
+
                 this.storeNode(overHangingChild);
             }
         }
@@ -193,22 +224,20 @@ export default {
 
             if (this.priorityEnabled()) {
 
-                //update all elements to captue lately added elements
                 const collectionUpdated = this.updateCollection();
 
-                const parentWidth = util.width(this.container);
-                if (collectionUpdated || data.lastParentWidth !== parentWidth) {
-
-                    this.resize(data, parentWidth);
-
-                } else if (data.growCheck) {
-
-                    if (this.canGrow()) {
-                        debugger;
-                        this.resize(data, parentWidth);
-                    }
-                    data.growCheck = false;
+                if (collectionUpdated || data.lastParentWidth !== this.parentWidth()) {
+                    this.resize();
+                } else if (data.skipGrowCeck) {
+                    // console.log('skipped...');
+                    delete data.skipGrowCeck;// = false;
+                } else if (this.mightGrow() && this.canGrow()) {
+                    this.resize();
+                } else {
+                    data.skipGrowCeck = true;
                 }
+
+                data.lastParentWidth = this.parentWidth();
 
             } else {
                 this.putBack();
