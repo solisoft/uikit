@@ -59,7 +59,7 @@ module.exports = [
         },
         plugins: [
             // new circular,
-            // new uglify,
+            new uglify,
             new webpack.DefinePlugin({
                 BUNDLED: true,
                 VERSION: `'${version}'`
