@@ -30,7 +30,10 @@ export default function (UIkit) {
 
         apply(doc.body, connect);
 
-        (new Observer(mutations => mutations.forEach(applyMutation))).observe(docEl, {
+        (new Observer(mutations => {
+            mutations.forEach(applyMutation);
+            mutations.forEach(({target}) => delete target.ukNoUpdate);
+        })).observe(docEl, {
             childList: true,
             subtree: true,
             characterData: true,
@@ -64,6 +67,8 @@ export default function (UIkit) {
         var update = type !== 'attributes'
             ? applyChildList(mutation)
             : attributeName === 'href' || applyAttribute(mutation);
+
+        update &= !target.ukNoUpdate;
 
         update && UIkit.update(createEvent('update', true, false, {mutation: true}), target, true);
 

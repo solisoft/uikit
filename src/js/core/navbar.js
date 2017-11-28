@@ -43,6 +43,10 @@ export default function (UIkit) {
 
         computed: {
 
+            subtractedWidth() {
+                return this.noPriorityLists.reduce((width, list) => width + list.offsetWidth, 0);
+            },
+
             boundary({boundary, boundaryAlign}, $el) {
                 return (boundary === true || boundaryAlign) ? $el : boundary;
             },
@@ -129,8 +133,8 @@ export default function (UIkit) {
             },
 
             getAvailableWidth() {
-                const sub = this.noPriorityLists.reduce((width, list) => width + list.offsetWidth, 0);
-                const pw = this.parentWidth();
+                const sub = this.subtractedWidth;
+                const pw = this.parentWidth;
                 const availableWidth = pw - sub;
                 return availableWidth;
             },

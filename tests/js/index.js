@@ -55,6 +55,9 @@ window.addEventListener('load', () => setTimeout(() => {
     var $styles = css(append($container, '<select class="uk-select uk-form-width-small"></select>'), 'margin', '20px');
     var $inverse = css(append($container, '<select class="uk-select uk-form-width-small"></select>'), 'margin', '20px');
     var $rtl = css(append($container, '<label></label>'), 'margin', '20px');
+    var $newWindow = css(append($container, '<span><button class="uk-button uk-button-default">window</button></span>'), 'margin', '20px');
+    var $bigger = css(append($container, '<span><button class="uk-button uk-button-default">+</button></span>'), 'margin', '20px');
+    var $smaller = css(append($container, '<span><button class="uk-button uk-button-default">-</button></span>'), 'margin', '20px');
 
     // Tests
     // ------------------------------
@@ -205,6 +208,11 @@ window.addEventListener('load', () => setTimeout(() => {
     });
 
     $rtl.firstElementChild.checked = dir === 'rtl';
+
+    var otherWindow;
+    $newWindow.firstChild.onclick = e => otherWindow = window.open(window.location, 'controlledWindow', 'width=200,height=200');
+    $bigger.firstChild.onclick = e => otherWindow.resizeBy(+1, 0);
+    $smaller.firstChild.onclick = e => otherWindow.resizeBy(-1, 0);
 
     css(docEl, 'padding-top', '');
 }, 100));

@@ -5,6 +5,10 @@ export default {
     computed: {
         overlappingItems() {
             throw 'overlapping items must be override';
+        },
+
+        uniqueOverlappingItems() {
+            return this.overlappingItems.filter(parent => !this.overlappingItems.some(node => parent !== node && parent.contains(node)));
         }
     },
 
@@ -14,13 +18,19 @@ export default {
             return true;
         },
 
+        reset() {
+            this.uniqueOverlappingItems.forEach(item => item.style.transform = '');
+        },
+
         preventOverlap() {
             var spaceAvailable = 0;
             var right = 0;
+            var width = 0;
             //filter 'double' entries
-            var items = this.overlappingItems.filter(parent => !this.overlappingItems.some(node => parent !== node && parent.contains(node)));
-            //reset items
-            items.forEach(item => item.style.transform = '');
+            const items = this.uniqueOverlappingItems;
+            
+            this.reset();
+
             var translations = items.map(item => ({item, bounds: item.getBoundingClientRect()}))
                                     .sort((a, b) => a.bounds.left - b.bounds.left);
 
@@ -33,11 +43,14 @@ export default {
                 right = box.right;
                 // }
 
+                width += box.width;
+
                 if (overLap > 0) {
                     translation.x = overLap;
                     right += overLap;
 
                 } else {
+                    width -= overLap;
                     translation.x = 0;
                     translation.space = -overLap;
                     spaceAvailable -= overLap;
@@ -46,7 +59,8 @@ export default {
 
             });
 
-            var overlapsRight = right - this.$el.getBoundingClientRect().right;
+            var overlapsRight = width - this.$el.offsetWidth;
+            // var overlapsRight = right - this.$el.getBoundingClientRect().right;
 
             translations.slice().reverse().some(item => {
                 const index = translations.indexOf(item);
@@ -72,6 +86,7 @@ export default {
 
     update: {
         write() {
+            // return;
             if (this.preventOverlapEnabled()) {
                 this.preventOverlap();
             }

@@ -13,7 +13,7 @@ export default {
         dropdownTemplate: '<div uk-dropdown></div>',
         hiddenElements: [],
         allElements: [],
-        currentElements: [],
+        currentElements: []
     },
 
     computed: {
@@ -61,26 +61,27 @@ export default {
 
         subDivNode() {
             return UIkit.util.$('> div', this.dropNode);
-        }
+        },
+
+        moreNodeWidth() {
+            return this.getMoreNodeWidth();
+        },
+
+        parentWidth() {
+            const computedWidth = UIkit.util.width(this.container);//.clientWidth;
+            return computedWidth;
+        },
 
     },
 
     methods: {
 
-        parentWidth() {
-            const pw = this.container.clientWidth;
-            const pw2 = UIkit.util.width(this.container);//.clientWidth;
-            // console.log('pw',pw,'pw2',pw2);
-            // if(pw > pw2) debugger;
-            return Math.max(pw2, pw);
-        },
-
         getAvailableWidth(list) {
-            return this.parentWidth();
+            return this.parentWidth;
         },
 
         getNeededWidth() {
-            const w = this.currentElements.reduce((width, {el}) => width + el.offsetWidth, 0) + (this.currentElements.length < this.allElements.length ? this.moreNode.offsetWidth : 0);
+            const w = this.currentElements.reduce((width, el) => width + (el.width || (el.width = el.el.offsetWidth)), 0) + (this.currentElements.length < this.allElements.length ? this.moreNodeWidth : 0);
             return w;
         },
 
@@ -88,13 +89,19 @@ export default {
             return this.currentElements.length < this.allElements.length;
         },
 
+        getMoreNodeBounds() {
+            return {top: this.moreNode.offsetTop, height: this.moreNode.offsetHeight};
+        },
+
         hasBreakingElement() {
             var prevElement = null;
             var elements = this.showMore() ? this.currentElements.concat([{el: this.moreNode}]) : this.currentElements;
-            return elements.some(({el}) => {
+            return elements.some(el => {
 
+                el.top = el.top || el.el.offsetTop;
                 if (prevElement) {
-                    return el.offsetTop >= (prevElement.offsetTop + prevElement.offsetHeight);
+                    prevElement.height = prevElement.height || prevElement.el.offsetHeight;
+                    return el.top >= (prevElement.top + prevElement.height);
                 }
                 prevElement = el;
             });
@@ -163,22 +170,7 @@ export default {
         },
 
         getAvailableSpace() {
-            return this.parentWidth() - this.getNeededWidth();
-        },
-
-        mightGrow() {
-            return true;
-        },
-
-        canGrow() {
-            if (this.hiddenElements.length) {
-
-                this.putOneEntryBack();
-                const space = this.getAvailableSpace();
-                this.removeOneEntry();
-
-                return space >= 0;
-            }
+            return this.getAvailableWidth() - this.getNeededWidth();
         },
 
         storeNode(overHangingChild) {
@@ -196,13 +188,32 @@ export default {
                 util.append(node.origin, node.el);
             });
 
-            this.moreNode && this.moreNode.remove();
             this.currentElements = Array.from(this.allElements);
             this.hiddenElements = [];
+            
+            if (this.moreNode) {
+                this.moreNode.remove();
+            }
+            
+            this.measure();
+        },
+
+        getMoreNodeWidth() {
+            return this.moreNode.offsetWidth;
+        },
+
+        measure() {
+            this.currentElements.forEach(el => {
+                delete el.width;
+                delete el.top;
+                delete el.height;
+            });
+            delete this._moreNodeBounds;
         },
 
         resize() {
 
+            const oldSize = this.currentElements.length;
             this.putBack();
 
             while (this.shouldShrink()) {
@@ -214,6 +225,16 @@ export default {
 
                 this.storeNode(overHangingChild);
             }
+
+            const newSize = this.currentElements.length;
+
+            if (newSize === oldSize) {
+
+                this.temporaryNode.ukNoUpdate = true;
+                this.priorityLists.forEach(list => list.ukNoUpdate = true);
+                //prevent all icons from tirggering updates
+                UIkit.util.$$('.uk-icon', this.$el).forEach(el => el.ukNoUpdate = true);
+            }
         }
 
     },
@@ -221,23 +242,12 @@ export default {
     update: {
 
         write(data, update) {
-
+            // return;
             if (this.priorityEnabled()) {
 
-                const collectionUpdated = this.updateCollection();
-
-                if (collectionUpdated || data.lastParentWidth !== this.parentWidth()) {
-                    this.resize();
-                } else if (data.skipGrowCeck) {
-                    // console.log('skipped...');
-                    delete data.skipGrowCeck;// = false;
-                } else if (this.mightGrow() && this.canGrow()) {
-                    this.resize();
-                } else {
-                    data.skipGrowCeck = true;
-                }
-
-                data.lastParentWidth = this.parentWidth();
+                delete this._computeds.parentWidth;
+                this.updateCollection();
+                this.resize();
 
             } else {
                 this.putBack();
