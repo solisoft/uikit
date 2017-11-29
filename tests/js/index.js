@@ -50,14 +50,20 @@ window.addEventListener('load', () => setTimeout(() => {
     var {addClass, append, css, on, prepend, removeClass, trigger, ucfirst} = UIkit.util;
 
     var $body = document.body;
-    var $container = prepend($body, '<div class="uk-container"></div>');
+
+    var $container = prepend($body, '<div class="uk-container uk-flex uk-flex-between"></div>');
     var $tests = css(append($container, '<select class="uk-select uk-form-width-small"></select>'), 'margin', '20px 20px 20px 0');
     var $styles = css(append($container, '<select class="uk-select uk-form-width-small"></select>'), 'margin', '20px');
     var $inverse = css(append($container, '<select class="uk-select uk-form-width-small"></select>'), 'margin', '20px');
     var $rtl = css(append($container, '<label></label>'), 'margin', '20px');
-    var $newWindow = css(append($container, '<span><button class="uk-button uk-button-default">window</button></span>'), 'margin', '20px');
-    var $bigger = css(append($container, '<span><button class="uk-button uk-button-default">+</button></span>'), 'margin', '20px');
+
+    var $tablet = css(append($container, '<span><button class="uk-button uk-button-default" uk-icon="tablet"></button></span>'), 'margin', '20px');
+    var $phone = css(append($container, '<span><button class="uk-button uk-button-default" uk-icon="phone"></button></span>'), 'margin', '20px');
+    var $a = css(append($container, '<span><button class="uk-button uk-button-default">A</button></span>'), 'margin', '20px');
+    var $b = css(append($container, '<span><button class="uk-button uk-button-default">B</button></span>'), 'margin', '20px');
     var $smaller = css(append($container, '<span><button class="uk-button uk-button-default">-</button></span>'), 'margin', '20px');
+    var $rszMnt = css(append($container, '<span><input type="nuzmber" class="uk-input uk-form-width-xsmall" value="1"></input></span>'), 'margin', '20px');
+    var $bigger = css(append($container, '<span><button class="uk-button uk-button-default">+</button></span>'), 'margin', '20px');
 
     // Tests
     // ------------------------------
@@ -210,9 +216,33 @@ window.addEventListener('load', () => setTimeout(() => {
     $rtl.firstElementChild.checked = dir === 'rtl';
 
     var otherWindow;
-    $newWindow.firstChild.onclick = e => otherWindow = window.open(window.location, 'controlledWindow', 'width=200,height=200');
-    $bigger.firstChild.onclick = e => otherWindow.resizeBy(+1, 0);
-    $smaller.firstChild.onclick = e => otherWindow.resizeBy(-1, 0);
+    function getExternalWindow() {
+        if (!otherWindow) {
+            otherWindow = window.open(window.location, 'controlledWindow', 'width=200,height=200');
+        }
+        storeMap();
+        return otherWindow;
+    }
+    function storeMap() {
+        // debugger
+        if (selectedMapentry && otherWindow) {
+            map[selectedMapentry] = {width: otherWindow.innerWidth, height: otherWindow.innerHeight};
+        }
+    }
+    function loadMapEntry() {
+        // debugger
+        selectedMapentry && map[selectedMapentry] && otherWindow ? otherWindow.resizeTo(map[selectedMapentry].width, map[selectedMapentry].height) : null;
+    }
+    const map = {};
+    var selectedMapentry = null;
+
+    $tablet.firstChild.onclick = e => getExternalWindow().resizeTo(768, 1024);
+    $phone.firstChild.onclick = e => getExternalWindow().resizeTo(640 / 2, 1136 / 2);
+
+    $a.firstChild.onclick = e => {getExternalWindow(); selectedMapentry = 'a'; loadMapEntry();};
+    $b.firstChild.onclick = e => {getExternalWindow(); selectedMapentry = 'b'; loadMapEntry();};
+    $bigger.firstChild.onclick = e => getExternalWindow().resizeBy(+$rszMnt.firstChild.value, 0);
+    $smaller.firstChild.onclick = e => getExternalWindow().resizeBy(-$rszMnt.firstChild.value, 0);
 
     css(docEl, 'padding-top', '');
 }, 100));
