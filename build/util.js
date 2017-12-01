@@ -13,7 +13,9 @@ var replace = require('rollup-plugin-replace');
 var alias = require('rollup-plugin-import-alias');
 var version = require('../package.json').version;
 var banner = `/*! UIkit ${version} | http://www.getuikit.com | (c) 2014 - 2017 YOOtheme | MIT License */\n`;
-
+var defaultSVGHeader = '<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">';//require('./defaultSVGHeader');
+var selfClosing = true;
+var stripDefaultSVGHeaders = true;
 exports.banner = banner;
 
 exports.read = function (file, callback) {
@@ -91,7 +93,8 @@ exports.compile = function (file, dest, external, globals, name, aliases, bundle
         plugins: [
             replace({
                 BUNDLED: bundled || false,
-                VERSION: `'${version}'`
+                VERSION: `'${version}'`,
+                SVG_HEADER: defaultSVGHeader
             }),
             alias({
                 Paths: aliases || {},
@@ -121,7 +124,14 @@ exports.compile = function (file, dest, external, globals, name, aliases, bundle
 
 exports.icons = function (src) {
     return JSON.stringify(glob.sync(src, {nosort: true}).reduce((icons, file) => {
-        icons[path.basename(file, '.svg')] = fs.readFileSync(file).toString().trim().replace(/\n/g, '').replace(/>\s+</g, '> <');
+        var icon = fs.readFileSync(file).toString().trim().replace(/\n/g, '').replace(/>\s+</g, '> <');
+        if (selfClosing) {
+            icon = icon.replace(/>\s*<\/(?!svg).*?>/g, '\/>').trim();
+        }
+        if (stripDefaultSVGHeaders && icon.indexOf(defaultSVGHeader) >= 0) {
+            icon = '#' + icon.replace(defaultSVGHeader, '').replace('</svg>', '').trim();
+        }
+        icons[path.basename(file, '.svg')] = icon;
         return icons;
     }, {}), null, '    ');
 };

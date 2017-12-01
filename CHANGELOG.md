@@ -10,7 +10,7 @@
 - Add UIkit version banner to generated css files
 - Improve UIkit.container setter (allows for assigning selector strings)
 - Add option to skip minification for less building (./build/less.js -d)
-
+- Improve optimized SVG storage and removed legacy SVG format (self closing tags)
 ### Deprecated
 
 - Deprecate `uk-gif`
