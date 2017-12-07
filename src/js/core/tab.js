@@ -1,11 +1,11 @@
-import { Class } from '../mixin/index';
-import { hasClass } from '../util/index';
+import { Class, Priority } from '../mixin';
+import { hasClass } from '../util';
 
 export default function (UIkit) {
 
     UIkit.component('tab', UIkit.components.switcher.extend({
 
-        mixins: [Class],
+        mixins: [Class, Priority],
 
         name: 'tab',
 
@@ -15,7 +15,24 @@ export default function (UIkit) {
 
         defaults: {
             media: 960,
-            attrItem: 'uk-tab-item'
+            attrItem: 'uk-tab-item',
+            mediaToggler: null,
+            toggle: '> .uk-more > .uk-dropdown > * > *, > *:not(.uk-more)',
+        },
+
+        methods: {
+
+            priorityEnabled() {
+                var enabled = !this.mediaToggler || !this.mediaToggler.isToggled();
+
+                this.$options.mixins.forEach(mixin => {
+                    if (mixin.methods && mixin.methods.priorityEnabled) {
+                        enabled &= mixin.methods.priorityEnabled.call(this);
+                    }
+                });
+
+                return enabled;
+            },
         },
 
         init() {
@@ -27,7 +44,7 @@ export default function (UIkit) {
                     : false;
 
             if (cls) {
-                UIkit.toggle(this.$el, {cls, mode: 'media', media: this.media});
+                this.mediaToggler = UIkit.toggle(this.$el, {cls, mode: 'media', media: this.media});
             }
         }
 

@@ -82,8 +82,6 @@ function _query(selector, context = doc, queryFn) {
 
         }).filter(Boolean).join(',');
 
-        context = doc;
-
     }
 
     try {

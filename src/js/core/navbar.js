@@ -1,11 +1,38 @@
-import { Class } from '../mixin/index';
-import { $$, addClass, after, append, assign, css, height, includes, isRtl, isVisible, matches, noop, query, toFloat, Transition, within } from '../util/index';
+import { Class, Priority } from '../mixin/index';
+import { prepend, doc, width, hasClass, $, $$, addClass, after, append, assign, css, height, includes, isRtl, isVisible, matches, noop, query, toFloat, Transition, within } from '../util';
 
 export default function (UIkit) {
 
     UIkit.component('navbar', {
 
-        mixins: [Class],
+        mixins: [Class, {
+            update: {
+
+                write(data, update) {
+
+                    delete this._computeds.layoutItems;
+                    if (data.lastWidth !== this.$el.offsetWidth) {
+                        data.lastWidth = this.$el.offsetWidth;
+
+                        this.restoreOriginalNavbar();
+                        const elementsChanged = this.updateStorage();
+                        this.enablePrio = this.priorityShouldBeEnabled();
+
+                        if (this.enablePrio && (this.temporaryList.length === 0 || elementsChanged)) {
+                            this.moveElementsToTemporaryList();
+                        } else {
+                            //remove hidden elemetns to prevent "puBack" in priority code
+                            this.hiddenElements = [];
+                        }
+                    } else if (!this.enablePrio) {
+                        this.restoreOriginalNavbar();
+                        this.enablePrio = this.priorityShouldBeEnabled();
+                    }
+
+                },
+                events: ['load', 'resize']
+            },
+        }, Priority ],
 
         props: {
             dropdown: String,
@@ -24,6 +51,8 @@ export default function (UIkit) {
         },
 
         defaults: {
+            dropdownTemplate: '<div class="uk-navbar-dropdown"></div>',
+            dropDownContainerClass: 'uk-nav uk-navbar-dropdown-nav',
             dropdown: '.uk-navbar-nav > li',
             align: !isRtl ? 'left' : 'right',
             clsDrop: 'uk-navbar-dropdown',
@@ -38,9 +67,63 @@ export default function (UIkit) {
             dropbarMode: 'slide',
             dropbarAnchor: false,
             duration: 200,
+            temporaryList: [],
+            elementMappings: [],
+            navBars: [],
+            priorityBarNode: null,
+            enablePrio: false
         },
 
         computed: {
+
+            priorityList() {
+                return this.prioBarMenu;
+            },
+
+            availableWidth() {
+                return width(this.$el) - [this.prioBarItems, this.prioBarLogo].reduce((width, item) => width + item.getBoundingClientRect().width, 0);
+            },
+
+            allMenuElements() {
+                return $$('.uk-navbar-nav > *, .uk-navbar-item', this.$el).filter(el => el !== this.moreNode);
+            },
+
+            prioBar() {
+
+                if (!this.priorityBarNode) {
+                    var position = 'center';
+                    if ($('.uk-navbar-left', this.$el)) {
+                        position = 'left';
+                    } else if ($('.uk-navbar-right', this.$el)) {
+                        position = 'right';
+                    }
+
+                    this.priorityBarNode = prepend(this.$el,
+                        `<div class="uk-navbar-${position}">
+                            <div class="uk-logo"></div>
+                            <ul class="uk-navbar-nav"></ul>
+                            <div class="uk-items"></div>
+                        </div>`);
+                }
+
+                return this.priorityBarNode;
+            },
+
+            prioBarItems() {
+                return $('.uk-items', this.prioBar);
+            },
+
+            prioBarLogo() {
+                return $('.uk-logo', this.prioBar);
+            },
+
+            prioBarMenu() {
+                return $('.uk-navbar-nav', this.prioBar);
+            },
+
+            layoutItems() {
+                return $$('> [class^=uk-navbar-] > *', this.$el).map(item => ({item, bounds: item.getBoundingClientRect()}));
+            },
 
             boundary({boundary, boundaryAlign}, $el) {
                 return (boundary === true || boundaryAlign) ? $el : boundary;
@@ -53,7 +136,6 @@ export default function (UIkit) {
         },
 
         ready() {
-
             if (this.dropbar) {
                 UIkit.navbarDropbar(
                     query(this.dropbar, this.$el) || after(this.dropbarAnchor || this.$el, '<div></div>'),
@@ -93,6 +175,89 @@ export default function (UIkit) {
         ],
 
         methods: {
+
+            isLogo(el) {
+                return hasClass(el, 'uk-logo') || $('.uk-logo', el);
+            },
+
+            isItem(el) {
+                return hasClass(el, 'uk-navbar-item') || $('.uk-navbar-item', el);
+            },
+
+            moveElementsToTemporaryList() {
+
+                this.temporaryList = this.elementMappings.slice();
+
+                this.temporaryList.forEach(item => {
+                    if (this.isLogo(item.el)) {
+                        append(this.prioBarLogo, item.el);
+                    } else if (this.isItem(item.el)) {
+                        append(this.prioBarItems, item.el);
+                    } else {
+                        append(this.prioBarMenu, item.el);
+                    }
+                });
+
+                this.navBars = $$('> [class^=uk-navbar-]', this.$el);
+                this.navBars.forEach(bar => bar.remove());
+
+                append(this.$el, this.prioBar);
+
+            },
+
+            restoreOriginalNavbar() {
+                this.prioBar.remove();
+                this.temporaryList.sort((a, b) => a.index - b.index)
+                                  .forEach(item => {
+                                      append(item.sourceNode, item.el);
+                                  });
+
+                this.temporaryList = [];
+
+                const frag = doc.createDocumentFragment();
+                this.navBars.forEach(item => {
+                    append(frag, item);
+                });
+                append(this.$el, frag);
+
+                this.navBars = [];
+
+            },
+
+            priorityShouldBeEnabled() {
+                const items = this.layoutItems.slice().sort((a, b) => a.bounds.left - b.bounds.left);
+                var prev;
+                const overLaps = items.some(item => {const overlaps = prev && item.bounds.left < prev.bounds.right; prev = item; return overlaps;});
+                const tooBig = items.reduce((right, trans) => Math.max(right, trans.bounds.right), 0) > this.$el.getBoundingClientRect().right;
+                return tooBig || overLaps;
+            },
+
+            updateStorage() {
+
+                var changed;
+                this.allMenuElements.forEach(el => {
+
+                    if (!this.elementMappings.some(item => el === item.el)) {
+                        this.elementMappings.push({
+                            el,
+                            sourceNode: el.parentNode,
+                            index: Array.prototype.indexOf.call(el.parentNode.childNodes, el)//.in
+                        });
+                        changed |= true;
+                    }
+
+                });
+
+                return changed;
+            },
+
+            useWidth() {
+                return true;
+            },
+
+            priorityEnabled() {
+                return this.enablePrio;
+            },
 
             getActive() {
                 var active = UIkit.drop.getActive();

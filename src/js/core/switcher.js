@@ -1,5 +1,5 @@
-import { Togglable } from '../mixin/index';
-import { $$, addClass, attr, data, filter, getIndex, hasClass, index, isTouch, matches, queryAll, removeClass, win } from '../util/index';
+import { Togglable } from '../mixin';
+import { $$, addClass, attr, data, filter, getIndex, hasClass, index, isTouch, matches, queryAll, removeClass, win } from '../util';
 
 export default function (UIkit) {
 
@@ -46,10 +46,11 @@ export default function (UIkit) {
                 name: 'click',
 
                 delegate() {
-                    return `${this.toggle}:not(.uk-disabled)`;
+                    return `${this.toggle}`.split(',').map(part => `${part}:not(.uk-disabled)`).join(',');
                 },
 
                 handler(e) {
+                    if (e.defaultPrevented) return;
                     e.preventDefault();
                     this.show(e.current);
                 }
@@ -68,6 +69,7 @@ export default function (UIkit) {
                 },
 
                 handler(e) {
+                    if (e.defaultPrevented) return;
                     e.preventDefault();
                     this.show(data(e.current, this.attrItem));
                 }
