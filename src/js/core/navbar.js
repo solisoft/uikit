@@ -21,7 +21,7 @@ export default function (UIkit) {
                         if (this.enablePrio && (this.temporaryList.length === 0 || elementsChanged)) {
                             this.moveElementsToTemporaryList();
                         } else {
-                            //remove hidden elemetns to prevent "puBack" in priority code
+                            //remove hidden elements to prevent "puBack" in priority code
                             this.hiddenElements = [];
                         }
                     } else if (!this.enablePrio) {

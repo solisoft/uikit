@@ -1,4 +1,4 @@
-import { prepend, append, $, width, toNodes, doc, $$ } from '../util/index';
+import { prepend, append, $, width, toNodes, $$ } from '../util/index';
 export default {
 
     props: {
