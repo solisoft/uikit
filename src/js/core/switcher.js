@@ -1,5 +1,5 @@
-import { Togglable } from '../mixin';
-import { $$, addClass, attr, data, filter, getIndex, hasClass, index, isTouch, matches, queryAll, removeClass, win } from '../util';
+import { Togglable } from '../mixin/index';
+import { $$, addClass, attr, data, filter, getIndex, hasClass, index, isTouch, matches, queryAll, removeClass, win } from '../util/index';
 
 export default function (UIkit) {
 
@@ -50,7 +50,9 @@ export default function (UIkit) {
                 },
 
                 handler(e) {
-                    if (e.defaultPrevented) return;
+                    if (e.defaultPrevented) {
+                        return;
+                    }
                     e.preventDefault();
                     this.show(e.current);
                 }
@@ -69,7 +71,9 @@ export default function (UIkit) {
                 },
 
                 handler(e) {
-                    if (e.defaultPrevented) return;
+                    if (e.defaultPrevented) {
+                        return;
+                    }
                     e.preventDefault();
                     this.show(data(e.current, this.attrItem));
                 }

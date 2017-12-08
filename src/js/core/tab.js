@@ -1,5 +1,5 @@
-import { Class, Priority } from '../mixin';
-import { hasClass } from '../util';
+import { Class, Priority } from '../mixin/index';
+import { hasClass } from '../util/index';
 
 export default function (UIkit) {
 
@@ -27,7 +27,7 @@ export default function (UIkit) {
 
                 this.$options.mixins.forEach(mixin => {
                     if (mixin.methods && mixin.methods.priorityEnabled) {
-                        enabled &= mixin.methods.priorityEnabled.call(this);
+                        enabled = enabled && mixin.methods.priorityEnabled.call(this);
                     }
                 });
 

@@ -53,7 +53,7 @@ export default function (UIkit) {
             ? applyChildList(mutation)
             : attributeName === 'href' || applyAttribute(mutation);
 
-        update &= !target.ukNoUpdate;
+        update = update && !target.ukNoUpdate;
 
         update && UIkit.update(createEvent('update', true, false, {mutation: true}), target, true);
 

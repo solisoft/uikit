@@ -44,6 +44,7 @@ module.exports = {
         "space-infix-ops": 2,
         "space-unary-ops": 2,
         "template-curly-spacing": 2,
+        "curly": 2
         // "sort-imports": ["error", {
         //     "ignoreCase": true,
         //     "ignoreMemberSort": false,

@@ -1,5 +1,5 @@
 import { Class, Priority } from '../mixin/index';
-import { prepend, doc, width, hasClass, $, $$, addClass, after, append, assign, css, height, includes, isRtl, isVisible, matches, noop, query, toFloat, Transition, within } from '../util';
+import { prepend, doc, width, hasClass, $, $$, addClass, after, append, assign, css, height, includes, isRtl, isVisible, matches, noop, query, toFloat, Transition, within } from '../util/index';
 
 export default function (UIkit) {
 
