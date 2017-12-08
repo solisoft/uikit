@@ -23,15 +23,7 @@ export default function (UIkit) {
         methods: {
 
             priorityEnabled() {
-                var enabled = !this.mediaToggler || !this.mediaToggler.isToggled();
-
-                this.$options.mixins.forEach(mixin => {
-                    if (mixin.methods && mixin.methods.priorityEnabled) {
-                        enabled = enabled && mixin.methods.priorityEnabled.call(this);
-                    }
-                });
-
-                return enabled;
+                return !this.mediaToggler || !this.mediaToggler.isToggled();
             },
         },
 

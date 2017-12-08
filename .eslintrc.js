@@ -35,7 +35,7 @@ module.exports = {
         "no-multiple-empty-lines": [2, {"max": 1}],
         "no-template-curly-in-string": 2,
         "no-trailing-spaces": 2,
-        "no-unused-vars": [2, {"vars": "local", "args": "none"}],
+        "no-unused-vars": [2, {"vars": "local", "args": "after-used"}],
         "no-useless-escape": 0,
         "quotes": [2, "single", {"avoidEscape": true}],
         "semi": [2, "always"],

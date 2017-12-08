@@ -23,15 +23,18 @@ export default {
 
         //the node to place menu items into
         temporaryNode() {
-            return $('> ul', this.moreNode.childNodes[this.moreNode.childNodes.length - 1]);
+            return this.moreNode.lastChild.firstChild;
         },
 
         moreNode() {
             if (!this._moreNode && this.priorityList) {
-                this._moreNode = append(this.priorityList, '<li class="uk-more"></li>');
+                const useUl = this.priorityList.nodeName === 'UL';
+                const containerTag = useUl ? 'ul' : 'div';
+                const contentTag = useUl ? 'li' : 'div';
+                this._moreNode = append(this.priorityList, `<${contentTag} class="uk-more"></${contentTag}>`);
                 append(this._moreNode, this.placeholderTemplate).textContent = this.priorityText;
                 const dropDown = append(this._moreNode, this.dropdownTemplate);
-                append(dropDown, `<ul class="${this.dropDownContainerClass}"></ul>`);
+                append(dropDown, `<${containerTag} class="${this.dropDownContainerClass}"></${containerTag}>`);
                 this._moreNode.remove();
             }
             return this._moreNode;
@@ -60,7 +63,7 @@ export default {
 
         hasBreakingElement() {
             var prevElement = null;
-            var elements = this.showMore() ? this.currentElements.concat([{ el: this.moreNode }]) : this.currentElements;
+            var elements = this.showMore() ? this.currentElements.concat([{el: this.moreNode}]) : this.currentElements;
             return elements.some(el => {
 
                 el.top = el.top || el.el.offsetTop;
@@ -83,10 +86,10 @@ export default {
         getAllElements() {
             return toNodes(this.priorityList.childNodes)
                 .filter(el => el !== this.moreNode && el.nodeType == Node.ELEMENT_NODE)
-                .map(el => ({ el }));
+                .map(el => ({el}));
         },
 
-        updateCollection(data) {
+        updateCollection() {
 
             var changed = false;
 
@@ -105,34 +108,30 @@ export default {
         },
 
         priorityEnabled() {
-			//simpke priority only works for ul's
-            return this.priorityList && this.priorityList.nodeName === 'UL';
+            return true;
         },
 
         restoreOriginalPriobar() {
 
             if (this.hiddenElements.length) {
                 //append all to ensure correct order
-                const frag = doc.createDocumentFragment();
-
                 this.allElements.forEach(node => {
-                    append(frag, node.el);
+                    append(this.priorityList, node.el);
                 });
 
-                append(this.priorityList, frag);
             }
 
-            this.currentElements = Array.from(this.allElements);
+            this.currentElements = this.allElements.concat();
             this.hiddenElements = [];
 
             if (this.moreNode) {
                 this.moreNode.remove();
             }
 
-            this.resetMeasurments();
+            this.resetMeasurements();
         },
 
-        resetMeasurments() {
+        resetMeasurements() {
             this.currentElements.forEach(el => {
                 delete el.width;
                 delete el.top;
@@ -151,9 +150,6 @@ export default {
                     return overHangingChild;
                 }
             }
-
-            return undefined;
-
         },
 
         resize() {
@@ -180,7 +176,7 @@ export default {
 
                 this.temporaryNode.ukNoUpdate = true;
                 this.priorityList.ukNoUpdate = true;
-				//prevent all icons from tirggering updates
+				//prevent all icons from triggering updates
                 $$('.uk-icon', this.$el).forEach(el => el.ukNoUpdate = true);
             }
         }
@@ -189,7 +185,7 @@ export default {
 
     update: {
 
-        write(data, update) {
+        write() {
 
             if (this.priorityEnabled()) {
 

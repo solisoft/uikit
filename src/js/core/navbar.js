@@ -1,5 +1,5 @@
 import { Class, Priority } from '../mixin/index';
-import { prepend, doc, width, hasClass, $, $$, addClass, after, append, assign, css, height, includes, isRtl, isVisible, matches, noop, query, toFloat, Transition, within } from '../util/index';
+import { prepend, width, hasClass, $, $$, addClass, after, append, assign, css, height, includes, isRtl, isVisible, matches, noop, query, toFloat, Transition, within } from '../util/index';
 
 export default function (UIkit) {
 
@@ -214,11 +214,9 @@ export default function (UIkit) {
 
                 this.temporaryList = [];
 
-                const frag = doc.createDocumentFragment();
                 this.navBars.forEach(item => {
-                    append(frag, item);
+                    append(this.$el, item);
                 });
-                append(this.$el, frag);
 
                 this.navBars = [];
 
